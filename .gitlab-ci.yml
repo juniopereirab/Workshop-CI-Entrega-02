@@ -1,0 +1,57 @@
+# Repositorio espelhado: https://gitlab.com/junio.pereir/Workshop-CI-Entrega-02
+
+stages:
+  - build
+  - test
+
+image: docker:20.10.8
+
+services:
+  - docker:dind
+
+variables:
+  docker_user: $docker_user
+  docker_password: $docker_password
+  PROJECT_NAME: $docker_user/damasojunio_gces_entrega02
+
+build-frontend:
+  stage: build
+  before_script:
+    - echo "BUILDING FRONTEND..."
+  script:
+    - docker build -f ./frontend/Dockerfile -t $PROJECT_NAME:build-frontend ./frontend
+    - echo $docker_password | docker login -u $docker_user --password-stdin
+    - docker push $PROJECT_NAME:build-frontend
+  after_script:
+    - echo "Frontend built successfully..."
+
+build-backend:
+  stage: build
+  before-script:
+    - echo "BUILDING BACKEND..."
+  script:
+    - docker build -f ./backend/Dockerfile -t $PROJECT_NAME:build-backend ./backend
+    - echo $docker_password | docker login -u $docker_user --password-stdin
+    - docker push $PROJECT_NAME:build-backend
+  after-script:
+    - echo "Backend built successfully..."
+
+test-backend:
+  image: docker/compose
+  stage: test
+  before_script:
+    - echo "TESTING BACKEND..."
+  script:
+    - docker-compose run --entrypoint "npm run unittest" backend
+  after_script:
+    - echo "Backend tested successfully..."
+
+test-frontend:
+  image: docker/compose
+  stage: test
+  before_script:
+    - echo "TESTING FRONTEND..."
+  script:
+    - docker-compose run --entrypoint "npm run test" frontend
+  after_script:
+    - echo "Frontend tested successfully..."
