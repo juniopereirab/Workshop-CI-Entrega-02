@@ -17,7 +17,7 @@ build-frontend:
   stage: build
   before_script:
     - echo "BUILDING FRONTEND..."
-    - echo "$DOCKER_HUB_PASSWORD" | docker login -username $DOCKER_HUB_USERNAME --password-stdin
+    - echo "$DOCKER_HUB_PASSWORD" | docker login --username $DOCKER_HUB_USERNAME --password-stdin
   script:
     - docker build -f ./frontend/Dockerfile -t $DOCKER_HUB_USERNAME/gces-frontend:build-frontend ./frontend
     # Publish on Docker Hub
@@ -29,7 +29,7 @@ build-backend:
   stage: build
   before_script:
     - echo "BUILDING BACKEND..."
-    - echo "$DOCKER_HUB_PASSWORD" | docker login -username $DOCKER_HUB_USERNAME --password-stdin
+    - echo "$DOCKER_HUB_PASSWORD" | docker login --username $DOCKER_HUB_USERNAME --password-stdin
   script:
     - docker build -f ./backend/Dockerfile -t $DOCKER_HUB_USERNAME/gces-backend:build-backend ./backend
     # Publish on Docker Hub
