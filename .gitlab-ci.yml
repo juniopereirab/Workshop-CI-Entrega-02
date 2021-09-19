@@ -13,14 +13,12 @@ variables:
   DOCKER_HUB_USER: $DOCKER_HUB_USER
   DOCKER_HUB_PASS: $DOCKER_HUB_PASS
 
-before_script:
-  - echo "$DOCKER_HUB_PASS" | docker login -username $DOCKER_HUB_USER --password-stdin
-
 build-frontend:
   stage: build
   before_script:
     - echo "BUILDING FRONTEND..."
-    - docker pull damasojunio/gces-frontend
+    - echo "$DOCKER_HUB_PASS" | docker login -username $DOCKER_HUB_USER --password-stdin
+    - docker pull $DOCKER_HUB_USER/gces-frontend:build-frontend
   script:
     - docker build -f ./frontend/Dockerfile -t $DOCKER_HUB_USER/gces-frontend:build-frontend ./frontend
     - docker push $DOCKER_HUB_USER/gces-frontend:build-frontend
@@ -29,13 +27,14 @@ build-frontend:
 
 build-backend:
   stage: build
-  before-script:
+  before_script:
     - echo "BUILDING BACKEND..."
-    - docker pull damasojunio/gces-backend
+    - echo "$DOCKER_HUB_PASS" | docker login -username $DOCKER_HUB_USER --password-stdin
+    - docker pull $DOCKER_HUB_USER/gces-backend:build-backend
   script:
     - docker build -f ./backend/Dockerfile -t $DOCKER_HUB_USER/gces-backend:build-backend ./backend
     - docker push $DOCKER_HUB_USER/gces-backend:build-backend
-  after-script:
+  after_script:
     - echo "Backend built successfully..."
 
 test-backend:
