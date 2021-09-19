@@ -10,18 +10,19 @@ services:
   - docker:dind
 
 variables:
-  docker_user: $docker_user
-  docker_password: $docker_password
-  PROJECT_NAME: $docker_user/damasojunio_gces_entrega02
+  DOCKER_HUB_USER: $DOCKER_HUB_USER
+  DOCKER_HUB_PASS: $DOCKER_HUB_PASS
+
+before_script:
+  - docker login -u $DOCKER_HUB_USER --password-stdin
 
 build-frontend:
   stage: build
   before_script:
     - echo "BUILDING FRONTEND..."
   script:
-    - docker build -f ./frontend/Dockerfile -t $PROJECT_NAME:build-frontend ./frontend
-    - echo $docker_password | docker login -u $docker_user --password-stdin
-    - docker push $PROJECT_NAME:build-frontend
+    - docker build --cache-from damasojunio/gces-frontend ./frontend
+    - docker push damasojunio/gces-frontend
   after_script:
     - echo "Frontend built successfully..."
 
@@ -30,9 +31,8 @@ build-backend:
   before-script:
     - echo "BUILDING BACKEND..."
   script:
-    - docker build -f ./backend/Dockerfile -t $PROJECT_NAME:build-backend ./backend
-    - echo $docker_password | docker login -u $docker_user --password-stdin
-    - docker push $PROJECT_NAME:build-backend
+    - docker build --cache-from damasojunio/gces-backend ./backend
+    - docker push damasojunio/gces-backend
   after-script:
     - echo "Backend built successfully..."
 
@@ -52,6 +52,6 @@ test-frontend:
   before_script:
     - echo "TESTING FRONTEND..."
   script:
-    - docker-compose run --entrypoint "npm run test" frontend
+    - docker-compose run --entrypoint "npm run coverage" frontend
   after_script:
     - echo "Frontend tested successfully..."
