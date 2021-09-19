@@ -10,18 +10,18 @@ services:
   - docker:dind
 
 variables:
-  DOCKER_HUB_USER: $DOCKER_HUB_USER
-  DOCKER_HUB_PASS: $DOCKER_HUB_PASS
+  DOCKER_HUB_USERNAME: $DOCKER_HUB_USERNAME
+  DOCKER_HUB_PASSWORD: $DOCKER_HUB_PASSWORD
 
 build-frontend:
   stage: build
   before_script:
     - echo "BUILDING FRONTEND..."
-    - echo "$DOCKER_HUB_PASS" | docker login -username $DOCKER_HUB_USER --password-stdin
+    - echo "$DOCKER_HUB_PASSWORD" | docker login -username $DOCKER_HUB_USERNAME --password-stdin
   script:
-    - docker build -f ./frontend/Dockerfile -t $DOCKER_HUB_USER/gces-frontend:build-frontend ./frontend
+    - docker build -f ./frontend/Dockerfile -t $DOCKER_HUB_USERNAME/gces-frontend:build-frontend ./frontend
     # Publish on Docker Hub
-    - docker push $DOCKER_HUB_USER/gces-frontend:build-frontend
+    - docker push $DOCKER_HUB_USERNAME/gces-frontend:build-frontend
   after_script:
     - echo "Frontend built successfully..."
 
@@ -29,11 +29,11 @@ build-backend:
   stage: build
   before_script:
     - echo "BUILDING BACKEND..."
-    - echo "$DOCKER_HUB_PASS" | docker login -username $DOCKER_HUB_USER --password-stdin
+    - echo "$DOCKER_HUB_PASS" | docker login -username $DOCKER_HUB_USERNAME --password-stdin
   script:
-    - docker build -f ./backend/Dockerfile -t $DOCKER_HUB_USER/gces-backend:build-backend ./backend
+    - docker build -f ./backend/Dockerfile -t $DOCKER_HUB_USERNAME/gces-backend:build-backend ./backend
     # Publish on Docker Hub
-    - docker push $DOCKER_HUB_USER/gces-backend:build-backend
+    - docker push $DOCKER_HUB_USERNAME/gces-backend:build-backend
   after_script:
     - echo "Backend built successfully..."
 
