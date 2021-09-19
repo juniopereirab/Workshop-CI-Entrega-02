@@ -18,7 +18,6 @@ build-frontend:
   before_script:
     - echo "BUILDING FRONTEND..."
     - echo "$DOCKER_HUB_PASS" | docker login -username $DOCKER_HUB_USER --password-stdin
-    - docker pull $DOCKER_HUB_USER/gces-frontend:build-frontend
   script:
     - docker build -f ./frontend/Dockerfile -t $DOCKER_HUB_USER/gces-frontend:build-frontend ./frontend
     # Publish on Docker Hub
@@ -31,7 +30,6 @@ build-backend:
   before_script:
     - echo "BUILDING BACKEND..."
     - echo "$DOCKER_HUB_PASS" | docker login -username $DOCKER_HUB_USER --password-stdin
-    - docker pull $DOCKER_HUB_USER/gces-backend:build-backend
   script:
     - docker build -f ./backend/Dockerfile -t $DOCKER_HUB_USER/gces-backend:build-backend ./backend
     # Publish on Docker Hub
@@ -40,7 +38,7 @@ build-backend:
     - echo "Backend built successfully..."
 
 test-backend:
-  image: docker/compose:stable
+  image: docker/compose:latest
   stage: test
   before_script:
     - echo "TESTING BACKEND..."
@@ -50,7 +48,7 @@ test-backend:
     - echo "Backend tested successfully..."
 
 test-frontend:
-  image: docker/compose:stable
+  image: docker/compose:latest
   stage: test
   before_script:
     - echo "TESTING FRONTEND..."
